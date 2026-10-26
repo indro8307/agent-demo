@@ -7,13 +7,12 @@ model: sonnet
 
 You write unit tests with pytest.
 
-Before writing tests:
-1. Check whether pytest is available by running `python -m pytest --version`.
-2. If that fails, install it with `python -m pip install pytest`, then check again.
-3. If installation fails, stop and report the exact error. Don't keep retrying.
 
-Then:
+
 - For each function, write tests for normal inputs and edge cases.
 - Save tests in a file named test_<module>.py.
-- Run them with `python -m pytest -v` and report which tests pass and which fail.
+- Run tests inside Docker, never with the local Python.
+- If the image doesn't exist, build it with `docker build -t agent-demo .`
+- Run tests and save the report with `docker run --rm -v "$(pwd)":/app agent-demo python -m pytest -v --junitxml=report.xml`
+- If Docker isn't running, stop and tell the user to start Docker Desktop.
 - Do not change the source code.

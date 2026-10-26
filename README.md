@@ -7,7 +7,7 @@ It contains a small Python module with a couple of deliberate bugs, plus two age
 | Agent | What it does | Tools |
 |---|---|---|
 | `reviewer` | Reviews code for bugs and missing edge cases. Read-only, never edits files. | Read, Grep, Glob |
-| `test-writer` | Installs pytest if needed, writes unit tests, runs them, and reports results. | Read, Write, Bash, Glob |
+| `test-writer` | Writes unit tests and runs them in Docker. | Read, Write, Bash, Glob |
 
 ## Project structure
 
@@ -17,6 +17,8 @@ agent-demo/
 │   └── agents/
 │       ├── reviewer.md
 │       └── test-writer.md
+├── .dockerignore
+├── Dockerfile
 ├── calc.py
 ├── requirements.txt
 └── README.md
@@ -27,7 +29,12 @@ agent-demo/
 ```bash
 git clone <your-repo-url>
 cd agent-demo
-Requires Python 3. The test-writer agent installs pytest automatically if it’s missing.
+```
+
+Claude Code runs on the host. Tests run in Docker, so start Docker Desktop first.
+
+```bash
+docker build -t agent-demo .
 ```
 
 ## Usage
@@ -53,6 +60,17 @@ Or run both at once:
 ```
 In parallel: have the reviewer agent review calc.py, and have the test-writer agent write and run tests for it. Then summarize what both found.
 ```
+
+## Run tests in Docker
+
+The image installs pytest from `requirements.txt`. Your project is mounted at `/app`, so you do not need to rebuild after editing `calc.py` or the tests.
+
+```bash
+docker build -t agent-demo .
+docker run --rm -v "${PWD}:/app" agent-demo
+```
+
+That writes `report.xml` in the project folder.
 
 ## Note
 
